@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# 本项目用 hash 路由(base: './'),无需 SPA rewrite;
+# 若以后改用 history 模式,取消下面注释即可
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
