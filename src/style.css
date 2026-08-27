@@ -1,0 +1,191 @@
+/* ===== 设计令牌 Design Tokens =====
+   统一色彩 / 字阶 / 间距 / 圆角 / 阴影，消除历史杂色(#409eff、深海军蓝等) */
+:root {
+  /* 品牌主色 —— 蓝青体系，全局唯一主色 */
+  --ps-primary: #2f6fed;
+  --ps-primary-hover: #1f5fd8;
+  --ps-primary-active: #1a52bd;
+  --ps-primary-soft: #eef4ff;
+  --ps-primary-tint: #f5f9ff;
+
+  /* 语义色（与 Element Plus 覆盖变量保持一致） */
+  --ps-success: #18a058;
+  --ps-success-soft: #e8f7ef;
+  --ps-warning: #f0a020;
+  --ps-warning-soft: #fdf3e3;
+  --ps-danger: #e5484d;
+  --ps-danger-soft: #fdecec;
+  --ps-info: #86909c;
+
+  /* 中性色阶 */
+  --ps-text-1: #1f2329;
+  --ps-text-2: #4e5969;
+  --ps-text-3: #86909c;
+  --ps-text-4: #c0c4cc;
+  --ps-bg: #f4f6fb;
+  --ps-surface: #ffffff;
+  --ps-border: #eef0f4;
+  --ps-border-strong: #e5e6eb;
+
+  /* 圆角 scale */
+  --ps-r-sm: 8px;
+  --ps-r-md: 12px;
+  --ps-r-lg: 14px;
+  --ps-r-xl: 18px;
+  --ps-r-pill: 999px;
+
+  /* 阴影 scale */
+  --ps-sh-1: 0 2px 8px rgba(31, 35, 41, 0.04);
+  --ps-sh-2: 0 6px 20px rgba(31, 35, 41, 0.06);
+  --ps-sh-3: 0 12px 32px rgba(31, 35, 41, 0.1);
+  --ps-sh-primary: 0 8px 20px rgba(47, 111, 237, 0.22);
+
+  /* 间距 scale */
+  --ps-sp-1: 8px;
+  --ps-sp-2: 12px;
+  --ps-sp-3: 16px;
+  --ps-sp-4: 20px;
+  --ps-sp-5: 24px;
+  --ps-sp-6: 32px;
+
+  /* 图表统一色板（驾驶舱/趋势图共用，避免杂色） */
+  --ps-c1: #2f6fed;
+  --ps-c2: #14b8a6;
+  --ps-c3: #f59e0b;
+  --ps-c4: #8b5cf6;
+  --ps-c5: #f43f5e;
+}
+
+/* 覆盖 Element Plus 默认色，保证组件色与令牌一致 */
+:root {
+  --el-color-primary: #2f6fed;
+  --el-color-primary-light-3: #5b8cf2;
+  --el-color-primary-light-5: #86aef7;
+  --el-color-primary-light-7: #b9d0fb;
+  --el-color-primary-light-8: #d2e1fc;
+  --el-color-primary-light-9: #eef4ff;
+  --el-color-primary-dark-2: #1f5fd8;
+  --el-color-success: #18a058;
+  --el-color-warning: #f0a020;
+  --el-color-danger: #e5484d;
+  --el-color-error: #e5484d;
+  --el-border-radius-base: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  background: var(--ps-bg);
+  color: var(--ps-text-1);
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== 全局卡片 ===== */
+.el-card {
+  border: none !important;
+  border-radius: var(--ps-r-lg) !important;
+  box-shadow: var(--ps-sh-2) !important;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+/* 仅内容型卡片悬浮微动，KPI/统计卡保持稳重 */
+.el-card.ps-lift:hover {
+  box-shadow: var(--ps-sh-3) !important;
+  transform: translateY(-2px);
+}
+.el-card__header {
+  border-bottom: 1px solid var(--ps-border);
+  font-weight: 600;
+  color: var(--ps-text-1);
+}
+
+/* ===== 排版基元 ===== */
+.page-section {
+  margin-bottom: var(--ps-sp-4);
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ps-text-1);
+  margin: 4px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 15px;
+  background: var(--ps-primary);
+  border-radius: 2px;
+}
+
+/* 统一数字字号字阶 */
+.stat-card .el-card__body {
+  padding: 18px 22px;
+}
+.big-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ps-primary);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.text-muted {
+  color: var(--ps-text-3);
+  font-size: 13px;
+}
+
+/* ===== 主按钮：品牌渐变（仅实心按钮，link 类型保留纯文字） ===== */
+.el-button--primary:not(.is-link) {
+  background: linear-gradient(135deg, #2f6fed, #4f8bff) !important;
+  border-color: transparent !important;
+  box-shadow: var(--ps-sh-primary);
+  color: #fff !important;
+}
+.el-button--primary:not(.is-link):hover,
+.el-button--primary:not(.is-link):focus {
+  filter: brightness(1.05);
+  background: linear-gradient(135deg, #2f6fed, #4f8bff) !important;
+}
+/* link 主按钮：高对比纯文字，避免被渐变背景吞掉 */
+.el-button.is-link.el-button--primary {
+  color: var(--ps-primary) !important;
+}
+.el-button.is-link.el-button--primary:hover {
+  background: var(--ps-primary-soft) !important;
+  color: var(--ps-primary-hover) !important;
+}
+
+/* ===== 表格 ===== */
+.el-table {
+  border-radius: var(--ps-r-md);
+  overflow: hidden;
+  --el-table-border-color: var(--ps-border);
+  --el-table-header-bg-color: #f7f9fc;
+}
+.el-table th.el-table__cell {
+  background: #f7f9fc !important;
+  color: var(--ps-text-2);
+  font-weight: 600;
+}
+.el-table td.el-table__cell {
+  color: var(--ps-text-1);
+}
+
+/* 滑块主色统一 */
+.el-slider__bar,
+.el-slider__button {
+  --el-slider-main-color: var(--ps-primary);
+}
