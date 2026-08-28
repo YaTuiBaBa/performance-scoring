@@ -15,6 +15,13 @@
         />
       </el-alert>
 
+      <div class="duty-toolbar">
+        <el-button size="small" :icon="Check" :disabled="alreadySubmitted" @click="toggleAll">
+          {{ allChecked ? '取消全选' : '一键全选' }}
+        </el-button>
+        <span class="duty-count">已选 {{ checkedCount }} / {{ totalCount }} 项</span>
+      </div>
+
       <el-alert
         v-if="alreadySubmitted"
         type="warning"
@@ -79,7 +86,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { Delete, Plus } from '@element-plus/icons-vue'
+import { Delete, Plus, Check } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '../../store/auth.js'
 import { useReportStore } from '../../store/reports.js'
@@ -128,6 +135,18 @@ const grouped = getDutiesGrouped(pid)
 const checked = reactive({})
 const completion = reactive({})
 const customs = ref([])
+
+// 一键全选 / 取消全选
+const allDutyIds = computed(() => Object.values(grouped).flat().map((d) => d.duty_id))
+const totalCount = computed(() => allDutyIds.value.length)
+const checkedCount = computed(() => allDutyIds.value.filter((id) => checked[id]).length)
+const allChecked = computed(() => totalCount.value > 0 && allDutyIds.value.every((id) => checked[id]))
+function toggleAll() {
+  const val = !allChecked.value
+  allDutyIds.value.forEach((id) => {
+    checked[id] = val
+  })
+}
 
 onMounted(() => {
   if (!alreadySubmitted.value) loadDraft()
@@ -236,6 +255,16 @@ function submit() {
 <style scoped>
 .duty-group {
   margin-bottom: 10px;
+}
+.duty-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.duty-count {
+  font-size: 13px;
+  color: #909399;
 }
 .cat-title {
   font-weight: 600;
