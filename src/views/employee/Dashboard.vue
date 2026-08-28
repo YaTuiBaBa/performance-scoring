@@ -9,6 +9,10 @@
             <div class="hero-status" v-if="!isFactoryLeader" :style="{ color: todayStatus.color, background: todayStatus.bg }">
               <el-icon><Clock /></el-icon> 今日日报：{{ todayStatus.text }}
             </div>
+            <div class="hero-badge" v-if="weather.isBad">
+              <el-icon class="hb-ic"><Warning /></el-icon>
+              <span>恶劣天气（中雨及以上）提交日报将 <b>自动满分、免审批</b></span>
+            </div>
           </div>
           <div class="hero-sub">{{ posName }} · {{ auth.user.department }} / {{ auth.user.station || '—' }}　|　{{ today }}</div>
         </div>
@@ -40,15 +44,6 @@
           </el-dropdown>
         </div>
       </div>
-
-      <el-alert
-        v-if="weather.isBad"
-        type="warning"
-        :closable="false"
-        class="hero-alert"
-      >
-        恶劣天气（中雨及以上），提交日报将 <b>自动满分、免审批</b>。
-      </el-alert>
 
       <!-- 指标区：均分 + 待办 + 考勤（厂长不填报、无个人绩效，整体隐藏） -->
       <div class="metrics" v-if="!isFactoryLeader">
@@ -335,8 +330,25 @@ function onWeather(code) {
   font-weight: 700;
   background: var(--ps-primary-soft);
 }
-.hero-alert {
-  margin-top: 8px;
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7a4b00;
+  background: #fff3d6;
+  border: 1px solid #ffd591;
+  box-shadow: 0 2px 8px rgba(250, 140, 22, 0.25);
+}
+.hero-badge b {
+  color: #d4380d;
+}
+.hero-badge .hb-ic {
+  color: #fa8c16;
+  font-size: 14px;
 }
 .entry-row {
   display: grid;
