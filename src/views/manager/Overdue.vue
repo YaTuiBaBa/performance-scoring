@@ -103,7 +103,7 @@ function urge(row) {
 </script>
 
 <style scoped>
-.stat-card .el-card__body {
+.stat-card :deep(.el-card__body) {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -120,7 +120,10 @@ function urge(row) {
   flex-shrink: 0;
 }
 .stat-meta {
-  line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .toolbar {
   display: flex;

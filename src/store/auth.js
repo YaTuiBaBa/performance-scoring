@@ -30,9 +30,9 @@ export const useAuthStore = defineStore('auth', {
     homePath() {
       const map = {
         EMPLOYEE: '/employee/dashboard',
-        STATION_MASTER: '/manager/pending',
+        STATION_MASTER: '/employee/dashboard',
         ZONE_LEADER: '/manager/report',
-        FACTORY_LEADER: '/dashboard/factory',
+        FACTORY_LEADER: '/employee/dashboard',
         HR: '/dashboard/factory',
         ADMIN: '/admin/positions'
       }

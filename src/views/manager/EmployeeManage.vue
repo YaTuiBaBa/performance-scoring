@@ -5,6 +5,30 @@
         <div class="section-title" style="margin: 0">人员管理</div>
         <el-button type="primary" :icon="Plus" @click="openAdd">新增员工</el-button>
       </div>
+      <el-form :inline="true" class="filter-bar">
+        <el-form-item label="姓名">
+          <el-input v-model="kw" placeholder="搜索姓名" clearable style="width: 150px" />
+        </el-form-item>
+        <el-form-item label="岗位">
+          <el-select v-model="fPos" placeholder="全部" clearable style="width: 160px">
+            <el-option v-for="p in positions" :key="p.position_id" :label="p.position_name" :value="p.position_id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部门">
+          <el-select v-model="fDept" placeholder="全部" clearable style="width: 160px">
+            <el-option v-for="d in deptOptions" :key="d" :label="d" :value="d" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="fRole" placeholder="全部" clearable style="width: 140px">
+            <el-option v-for="(l, r) in roleMap" :key="r" :label="l" :value="r" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button :icon="Search" @click="page = 1">查询</el-button>
+          <el-button :icon="RefreshLeft" @click="resetFilter">重置</el-button>
+        </el-form-item>
+      </el-form>
       <el-table :data="paged" border stripe>
         <el-table-column label="姓名" width="100">
           <template #default="{ row }">{{ row.real_name }}</template>
@@ -38,7 +62,7 @@
       <el-pagination
         class="page-section"
         layout="total, prev, pager, next"
-        :total="store.list.length"
+        :total="filtered.length"
         :page-size="pageSize"
         v-model:current-page="page"
       />
@@ -90,8 +114,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { Plus, Search, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePersonnelStore } from '../../store/personnel.js'
 import { positions, positionMap } from '../../mock/data.js'
@@ -110,10 +134,34 @@ const roleTag = (r) => ({ EMPLOYEE: 'info', STATION_MASTER: 'success', ZONE_LEAD
 const idName = (id) => store.byId(id)?.real_name || '—'
 const leaderCandidates = computed(() => store.list.filter((e) => e.user_id !== editingId.value))
 
+// 筛选
+const kw = ref('')
+const fPos = ref('')
+const fDept = ref('')
+const fRole = ref('')
+const deptOptions = computed(() => [...new Set(store.list.map((e) => e.department).filter(Boolean))])
+const filtered = computed(() =>
+  store.list.filter((e) => {
+    if (kw.value && !e.real_name.includes(kw.value.trim())) return false
+    if (fPos.value && e.primary_position_id !== fPos.value) return false
+    if (fDept.value && e.department !== fDept.value) return false
+    if (fRole.value && e.role !== fRole.value) return false
+    return true
+  })
+)
+function resetFilter() {
+  kw.value = ''
+  fPos.value = ''
+  fDept.value = ''
+  fRole.value = ''
+  page.value = 1
+}
+watch([kw, fPos, fDept, fRole], () => { page.value = 1 })
+
 // 分页
 const page = ref(1)
 const pageSize = 10
-const paged = computed(() => store.list.slice((page.value - 1) * pageSize, page.value * pageSize))
+const paged = computed(() => filtered.value.slice((page.value - 1) * pageSize, page.value * pageSize))
 
 // 弹窗
 const dialog = ref(false)
@@ -190,5 +238,11 @@ function remove(row) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 4px;
+}
+.filter-bar {
+  margin: 10px 0 14px;
+}
+.filter-bar :deep(.el-form-item) {
+  margin-bottom: 0;
 }
 </style>

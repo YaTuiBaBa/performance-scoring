@@ -1,10 +1,27 @@
 <template>
   <div>
     <el-card>
-      <div class="section-title">今日工作选择（请勾选今日完成的工作项）</div>
+      <div class="section-title">工作项选择（请勾选所选日期完成的工作项）</div>
 
       <el-alert type="info" :closable="false" style="margin-bottom: 14px">
-        岗位：{{ posName }}　|　提交日期：{{ date }}
+        岗位：{{ posName }}　|　提交日期：
+        <el-date-picker
+          v-model="date"
+          type="date"
+          value-format="YYYY-MM-DD"
+          :disabled-date="disabledDate"
+          placeholder="选择日期"
+          style="width: 180px; margin-left: 6px; vertical-align: middle"
+        />
+      </el-alert>
+
+      <el-alert
+        v-if="alreadySubmitted"
+        type="warning"
+        :closable="false"
+        style="margin-bottom: 14px"
+      >
+        该日期（{{ date }}）已提交，当前状态：{{ existingStatusText }}，无需重复提交。
       </el-alert>
 
       <!-- 岗位职责勾选区 -->
@@ -42,31 +59,70 @@
 
       <el-divider />
 
+      <el-alert
+        v-if="weather.isBad"
+        type="warning"
+        :closable="false"
+        style="margin-bottom: 14px"
+      >
+        当前为恶劣天气（中雨及以上），提交后将 <b>自动满分、免审批</b>。
+      </el-alert>
+
       <div class="actions">
-        <el-button @click="saveDraft">保存草稿</el-button>
-        <el-button type="primary" @click="submit">提交审批</el-button>
+        <el-button :disabled="alreadySubmitted" @click="saveDraft">保存草稿</el-button>
+        <el-button type="primary" :disabled="alreadySubmitted" @click="submit">提交审批</el-button>
       </div>
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '../../store/auth.js'
 import { useReportStore } from '../../store/reports.js'
+import { useWeatherStore } from '../../store/weather.js'
 import { getDutiesGrouped, positionMap } from '../../mock/data.js'
 
 const auth = useAuthStore()
 const store = useReportStore()
+const weather = useWeatherStore()
 const router = useRouter()
 
 const pid = auth.user.primary_position_id
 const posName = positionMap[pid]?.position_name
-const date = '2026-08-27'
-const reportId = `R-${auth.user.user_id}-27`
+const today = '2026-08-27'
+const date = ref(today)
+const reportId = computed(() => `R-${auth.user.user_id}-${date.value.slice(-2)}`)
+
+// 查重：该日期是否已提交（草稿不算已提交）
+const existing = computed(() => store.byUser(auth.user.user_id).find((r) => r.report_date === date.value))
+const alreadySubmitted = computed(() => !!existing.value && existing.value.status !== 'DRAFT')
+const existingStatusText = computed(() => {
+  if (!existing.value) return ''
+  return { DRAFT: '草稿', PENDING: '待审批', APPROVED: '已评分', REJECTED: '已驳回' }[existing.value.status] || existing.value.status
+})
+
+// 禁止选择未来日期（相对真实当前日期，确保“今天”始终可选，过去可补报）
+function disabledDate(time) {
+  return time.getTime() > Date.now()
+}
+function resetForm() {
+  for (const k in checked) delete checked[k]
+  for (const k in completion) delete completion[k]
+  customs.value = []
+}
+function loadDraft() {
+  const draft = localStorage.getItem('ps_draft_' + reportId.value)
+  if (draft) {
+    const d = JSON.parse(draft)
+    Object.assign(checked, d.checked || {})
+    Object.assign(completion, d.completion || {})
+    customs.value = d.customs || []
+  }
+}
 
 const grouped = getDutiesGrouped(pid)
 const checked = reactive({})
@@ -74,13 +130,11 @@ const completion = reactive({})
 const customs = ref([])
 
 onMounted(() => {
-  const draft = localStorage.getItem('ps_draft_' + reportId)
-  if (draft) {
-    const d = JSON.parse(draft)
-    d.checked && Object.assign(checked, d.checked)
-    d.completion && Object.assign(completion, d.completion)
-    customs.value = d.customs || []
-  }
+  if (!alreadySubmitted.value) loadDraft()
+})
+watch(date, () => {
+  resetForm()
+  if (!alreadySubmitted.value) loadDraft()
 })
 
 function addCustom() {
@@ -96,7 +150,7 @@ function collectDetails() {
     for (const d of grouped[cat]) {
       if (checked[d.duty_id]) {
         details.push({
-          detail_id: `${reportId}-${d.duty_id}`,
+          detail_id: `${reportId.value}-${d.duty_id}`,
           duty_id: d.duty_id,
           duty_category: cat,
           duty_desc: d.duty_desc,
@@ -133,23 +187,49 @@ function validate(details) {
 }
 
 function saveDraft() {
+  if (alreadySubmitted.value) return ElMessage.warning(`该日期（${date.value}）已提交（${existingStatusText.value}），无需重复提交`)
   const details = collectDetails()
   localStorage.setItem(
-    'ps_draft_' + reportId,
+    'ps_draft_' + reportId.value,
     JSON.stringify({ checked: { ...checked }, completion: { ...completion }, customs: customs.value })
   )
-  store.submit({ report_id: reportId, user_id: auth.user.user_id, report_date: date, status: 'DRAFT', details, submit_time: null })
+  store.submit({ report_id: reportId.value, user_id: auth.user.user_id, report_date: date.value, status: 'DRAFT', details, submit_time: null })
   ElMessage.success('草稿已保存')
 }
 
 function submit() {
+  if (alreadySubmitted.value) return ElMessage.warning(`该日期（${date.value}）已提交（${existingStatusText.value}），无需重复提交`)
   const details = collectDetails()
   const err = validate(details)
   if (err) return ElMessage.warning(err)
-  store.submit({ report_id: reportId, user_id: auth.user.user_id, report_date: date, status: 'PENDING', details, submit_time: new Date().toISOString() })
-  localStorage.removeItem('ps_draft_' + reportId)
+  if (weather.isBad) {
+    store.submit({
+      report_id: reportId.value,
+      user_id: auth.user.user_id,
+      report_date: date.value,
+      status: 'APPROVED',
+      details,
+      submit_time: new Date().toISOString(),
+      approval: {
+        score_quality: 10,
+        score_quantity: 10,
+        score_timeliness: 10,
+        score_total: 10,
+        comment: '恶劣天气（' + weather.info.label + '）自动满分',
+        manager_id: null,
+        approved_time: new Date().toISOString(),
+        reject_reason: null
+      }
+    })
+    localStorage.removeItem('ps_draft_' + reportId.value)
+    ElMessage.success('今日恶劣天气，日报自动满分，免审批')
+    router.push(auth.role === 'EMPLOYEE' ? '/employee/report/history' : '/manager/pending')
+    return
+  }
+  store.submit({ report_id: reportId.value, user_id: auth.user.user_id, report_date: date.value, status: 'PENDING', details, submit_time: new Date().toISOString() })
+  localStorage.removeItem('ps_draft_' + reportId.value)
   ElMessage.success('已提交，等待领导审批')
-  router.push('/employee/report/history')
+  router.push(auth.role === 'EMPLOYEE' ? '/employee/report/history' : '/manager/pending')
 }
 </script>
 

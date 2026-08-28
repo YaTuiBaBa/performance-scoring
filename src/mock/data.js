@@ -47,7 +47,15 @@ export const duties = [
   // 集输工
   { duty_id: 'D-JSG-1', position_id: 'JSG-001', duty_category: '原油集输', duty_desc: '负责原油集输（拉运）、计量工作', is_required: 1, sort_order: 1, status: 1 },
   { duty_id: 'D-JSG-2', position_id: 'JSG-001', duty_category: '化学药剂', duty_desc: '负责化学药剂使用量控制与投加', is_required: 0, sort_order: 2, status: 1 },
-  { duty_id: 'D-JSG-3', position_id: 'JSG-001', duty_category: '安全生产', duty_desc: '负责集输站安全巡检、隐患上报', is_required: 1, sort_order: 3, status: 1 }
+  { duty_id: 'D-JSG-3', position_id: 'JSG-001', duty_category: '安全生产', duty_desc: '负责集输站安全巡检、隐患上报', is_required: 1, sort_order: 3, status: 1 },
+  // 班站长
+  { duty_id: 'D-BZZ-1', position_id: 'BZZ-001', duty_category: '班前管理', duty_desc: '组织班前会，开展安全交底与当日工作任务布置', is_required: 1, sort_order: 1, status: 1 },
+  { duty_id: 'D-BZZ-2', position_id: 'BZZ-001', duty_category: '巡回检查', duty_desc: '对井站设备运行、压力参数开展巡回检查与隐患排查', is_required: 1, sort_order: 2, status: 1 },
+  { duty_id: 'D-BZZ-3', position_id: 'BZZ-001', duty_category: '生产协调', duty_desc: '协调当班生产运行，组织生产碰头会并落实产量指标', is_required: 1, sort_order: 3, status: 1 },
+  { duty_id: 'D-BZZ-4', position_id: 'BZZ-001', duty_category: '量化派工', duty_desc: '对班组成员当日工作进行量化派工与任务确认', is_required: 1, sort_order: 4, status: 1 },
+  { duty_id: 'D-BZZ-5', position_id: 'BZZ-001', duty_category: '安全环保', duty_desc: '开展安全环保监督检查，落实标准化井场维护', is_required: 1, sort_order: 5, status: 1 },
+  { duty_id: 'D-BZZ-6', position_id: 'BZZ-001', duty_category: '资料审核', duty_desc: '审核班组成员日报资料与上报数据，确保与现场一致', is_required: 1, sort_order: 6, status: 1 },
+  { duty_id: 'D-BZZ-7', position_id: 'BZZ-001', duty_category: '应急值守', duty_desc: '做好应急值守与信息报送，处置突发异常情况', is_required: 0, sort_order: 7, status: 1 }
 ]
 
 export function getDutiesByPosition(positionId) {
@@ -126,10 +134,12 @@ function genReports() {
     for (let day = 1; day <= 26; day++) {
       const date = new Date(2026, 7, day)
       const reportId = `R-${emp.user_id}-${day}`
-      // 最近 2 天（25/26）留给领导审批，作为待办；1 号某员工留一份草稿/驳回
+      // 最近 2 天（25/26）留给领导审批，作为待办；个别日期留作已驳回 / 草稿，丰富审批中心演示
       let status = 'APPROVED'
       if (day >= 25) status = 'PENDING'
       if (emp.user_id === 'U-1001' && day === 24) status = 'REJECTED'
+      if (emp.user_id === 'U-1002' && day === 22) status = 'REJECTED'
+      if (emp.user_id === 'U-1004' && day === 18) status = 'REJECTED'
       if (emp.user_id === 'U-1003' && day === 26) status = 'DRAFT'
 
       // 选职责项
@@ -255,4 +265,30 @@ export const scoreWeights = { quality: 0.4, quantity: 0.35, timeliness: 0.25 }
 
 export function calcTotal(q, qu, ti) {
   return round05(q * scoreWeights.quality + qu * scoreWeights.quantity + ti * scoreWeights.timeliness)
+}
+
+// ---------------------------------------------------------------------------
+// 8. 天气（演示用，可在员工端手动模拟；中雨及以上视为恶劣天气，日报自动满分）
+// ---------------------------------------------------------------------------
+export const WEATHER_TYPES = [
+  { code: 'CLEAR', label: '晴', icon: 'Sunny', autoFull: false },
+  { code: 'LIGHT_RAIN', label: '小雨', icon: 'Cloudy', autoFull: false },
+  { code: 'MIDDLE_RAIN', label: '中雨', icon: 'Lightning', autoFull: true },
+  { code: 'HEAVY_RAIN', label: '大雨', icon: 'Lightning', autoFull: true },
+  { code: 'STORM', label: '暴雨', icon: 'Lightning', autoFull: true }
+]
+
+export function isBadWeather(code) {
+  const w = WEATHER_TYPES.find((x) => x.code === code)
+  return !!(w && w.autoFull)
+}
+
+// ---------------------------------------------------------------------------
+// 9. 考勤（演示用，按月聚合的出勤/休假天数）
+// ---------------------------------------------------------------------------
+export function getAttendance(userId, ym = '2026-08') {
+  const rng = makeRng(7000 + (userId.charCodeAt(userId.length - 1) || 1) * 13 + ym.length)
+  const present_days = 18 + Math.floor(rng() * 6) // 18~23 天
+  const leave_days = Math.floor(rng() * 4) // 0~3 天
+  return { present_days, leave_days }
 }

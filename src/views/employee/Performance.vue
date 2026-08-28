@@ -91,3 +91,22 @@ const trendOption = computed(() => {
   }
 })
 </script>
+
+<style scoped>
+.page-section {
+  align-items: stretch;
+}
+.page-section > .el-col {
+  display: flex;
+}
+.page-section > .el-col > .el-card {
+  flex: 1;
+  width: 100%;
+}
+.page-section :deep(.el-card__body) {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+</style>
