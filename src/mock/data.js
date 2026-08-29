@@ -77,11 +77,11 @@ export function getDutiesGrouped(positionId) {
 // 3. 员工表（含演示登录账号）
 // ---------------------------------------------------------------------------
 export const employees = [
-  { user_id: 'U-1001', username: 'zhangwei', real_name: '张伟', primary_position_id: 'CYG-001', department: '采油一队', station: '兴庄作业区', phone: '13800001001', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2019-03-01', status: 1 },
-  { user_id: 'U-1002', username: 'liqiang', real_name: '李强', primary_position_id: 'CYG-001', department: '采油一队', station: '兴庄作业区', phone: '13800001002', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2021-07-15', status: 1 },
+  { user_id: 'U-1001', username: 'zhangwei', real_name: '张伟', primary_position_id: 'CYG-001', department: '巡检维护一班', station: '兴庄作业区', phone: '13800001001', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2019-03-01', status: 1 },
+  { user_id: 'U-1002', username: 'liqiang', real_name: '李强', primary_position_id: 'CYG-001', department: '巡检维护一班', station: '兴庄作业区', phone: '13800001002', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2021-07-15', status: 1 },
   { user_id: 'U-1003', username: 'wangfang', real_name: '王芳', primary_position_id: 'ZSG-001', department: '注水队', station: '注水一站', phone: '13800001003', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2020-05-20', status: 1 },
   { user_id: 'U-1004', username: 'liuyang', real_name: '刘洋', primary_position_id: 'JSG-001', department: '集输站', station: '集输一班', phone: '13800001004', role: 'EMPLOYEE', leader_id: 'U-2001', entry_date: '2018-11-02', status: 1 },
-  { user_id: 'U-2001', username: 'zhaojg', real_name: '赵建国', primary_position_id: 'BZZ-001', department: '采油一队', station: '兴庄作业区', phone: '13800002001', role: 'STATION_MASTER', leader_id: 'U-3001', entry_date: '2012-09-10', status: 1 },
+  { user_id: 'U-2001', username: 'zhaojg', real_name: '赵建国', primary_position_id: 'BZZ-001', department: '巡检维护一班', station: '兴庄作业区', phone: '13800002001', role: 'STATION_MASTER', leader_id: 'U-3001', entry_date: '2012-09-10', status: 1 },
   { user_id: 'U-3001', username: 'qiangang', real_name: '钱刚', primary_position_id: 'ZQL-001', department: '作业区', station: '', phone: '13800003001', role: 'ZONE_LEADER', leader_id: 'U-4001', entry_date: '2009-04-01', status: 1 },
   { user_id: 'U-4001', username: 'chenhong', real_name: '陈红', primary_position_id: 'CGL-001', department: '副经理', station: '兴庄作业区', phone: '13800004001', role: 'FACTORY_LEADER', leader_id: null, entry_date: '2005-02-01', status: 1 },
   { user_id: 'U-9001', username: 'admin', real_name: '系统管理员', primary_position_id: 'HR-001', department: '机关科室', station: '', phone: '13800009001', role: 'ADMIN', leader_id: null, entry_date: '2016-01-01', status: 1 }

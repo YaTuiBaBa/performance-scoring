@@ -83,7 +83,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-input v-model="form.department" placeholder="如：采油一队" />
+          <el-input v-model="form.department" placeholder="如：巡检维护一班" />
         </el-form-item>
         <el-form-item label="班站">
           <el-input v-model="form.station" placeholder="如：兴庄作业区（可留空）" />
