@@ -4,7 +4,7 @@
       <div class="ch-head-left">
         <div class="ch-title">厂级考核驾驶舱</div>
         <div class="ch-sub">统计月份 {{ selectedMonth }} · 数据更新于 2026-08-27</div>
-        <div class="ch-user">当前用户：{{ auth.user?.real_name }} · {{ posName(auth.user?.user_id) }} · {{ auth.user?.department }} / {{ auth.user?.station || '—' }}</div>
+        <div class="ch-user">当前用户：{{ auth.user?.real_name }} · {{ posName(auth.user?.user_id) }} / {{ auth.user?.station || '—' }}</div>
       </div>
       <el-date-picker
         v-model="selectedMonth"

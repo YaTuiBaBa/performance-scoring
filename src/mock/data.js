@@ -24,7 +24,7 @@ export const positions = [
   { position_id: 'WXG-001', position_name: '维修工', position_category: 'OPERATION', dept_type: '维修队', parent_position_id: 'BZZ-001', sort_order: 4, status: 1 },
   { position_id: 'BZZ-001', position_name: '班站长', position_category: 'MANAGEMENT', dept_type: '采油队', parent_position_id: 'ZQL-001', sort_order: 5, status: 1 },
   { position_id: 'ZQL-001', position_name: '作业区领导', position_category: 'MANAGEMENT', dept_type: '作业区', parent_position_id: 'CGL-001', sort_order: 6, status: 1 },
-  { position_id: 'CGL-001', position_name: '厂级领导', position_category: 'MANAGEMENT', dept_type: '厂部', parent_position_id: null, sort_order: 7, status: 1 },
+  { position_id: 'CGL-001', position_name: '作业区领导', position_category: 'MANAGEMENT', dept_type: '厂部', parent_position_id: null, sort_order: 7, status: 1 },
   { position_id: 'HR-001', position_name: '考核专员', position_category: 'MANAGEMENT', dept_type: '机关科室', parent_position_id: 'CGL-001', sort_order: 8, status: 1 }
 ]
 
