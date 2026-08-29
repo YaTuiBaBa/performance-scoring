@@ -86,7 +86,7 @@
           <el-input v-model="form.department" placeholder="如：采油一队" />
         </el-form-item>
         <el-form-item label="班站">
-          <el-input v-model="form.station" placeholder="如：王窑站（可留空）" />
+          <el-input v-model="form.station" placeholder="如：兴庄作业区（可留空）" />
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="form.role" style="width: 100%">

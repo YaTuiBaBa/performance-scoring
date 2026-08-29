@@ -67,7 +67,7 @@ const colors = { zhangwei: '#2f6fed', zhaojg: '#14b8a6', chenhong: '#8b5cf6' }
 const descs = {
   zhangwei: '一线员工 · 提报与查看绩效',
   zhaojg: '班站长 · 审批与评分',
-  chenhong: '厂级领导 · 考核驾驶舱'
+  chenhong: '作业区领导 · 考核驾驶舱'
 }
 const demoAccountsRich = demoAccounts.map((a) => ({
   ...a,

@@ -4,6 +4,7 @@
       <div class="ch-head-left">
         <div class="ch-title">厂级考核驾驶舱</div>
         <div class="ch-sub">统计月份 {{ selectedMonth }} · 数据更新于 2026-08-27</div>
+        <div class="ch-user">当前用户：{{ auth.user?.real_name }} · {{ posName(auth.user?.user_id) }} · {{ auth.user?.department }} / {{ auth.user?.station || '—' }}</div>
       </div>
       <el-date-picker
         v-model="selectedMonth"
@@ -143,10 +144,12 @@ import { useRouter } from 'vue-router'
 import { useReportStore } from '../../store/reports.js'
 import { useAppealStore } from '../../store/appeals.js'
 import { employeeMap, positionMap } from '../../mock/data.js'
+import { useAuthStore } from '../../store/auth.js'
 import ChartBox from '../../components/ChartBox.vue'
 
 const store = useReportStore()
 const appealStore = useAppealStore()
+const auth = useAuthStore()
 const router = useRouter()
 
 const selectedMonth = ref('2026-08')
@@ -490,6 +493,11 @@ const dimByZoneOption = computed(() => {
 .ch-sub {
   color: #909399;
   font-size: 13px;
+}
+.ch-user {
+  color: #5b6b7f;
+  font-size: 13px;
+  font-weight: 500;
 }
 .kpi {
   background: #fff;
